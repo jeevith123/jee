@@ -1,0 +1,24 @@
+package model;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
+public class DAOModel 
+{
+	Connector connect = new Connector();
+	private Statement statement = null;
+	public void InsertData() throws Exception
+	{
+		try
+		{
+			statement = connect.getConnection().createStatement();
+			String sql = "LOAD XML LOCAL INFILE 'G:/2nd Semester Subjects/ITMD 566/Assignment 2/Assignment 3/Customer.xml' INTO TABLE customer ROWS IDENTIFIED BY '<Customer>';";
+			statement.execute(sql);
+			System.out.println("XML data is pushed into the database");
+			statement.close();
+		}
+		catch(SQLException e)
+		{
+			System.out.println(e.getMessage());
+		}
+	}
