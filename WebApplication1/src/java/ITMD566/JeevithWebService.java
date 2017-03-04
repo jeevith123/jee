@@ -20,39 +20,48 @@ import javax.jws.WebParam;
  * @author makan
  */
 @WebService(serviceName = "NewWebService_ITMD566")
-public class NewWebService_ITMD566 {
+public class JeevithWebService {
 
     /**
-     * This is a sample web service operation
+    * Creates a new instance of a Conneciton class to the SQL Database.
+    */
+    private Connection getConnection(){
+        Class.forName("oracle.jdbc.OracleDriver");
+
+
+        Connection connection = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:makani", "system","Tani$1234");
+        return connection;
+    }
+
+    /**
+     * Returns Truck details by name
      */
-    @WebMethod(operationName = "findTrucByVin")
-    public String findTrucByVin(@WebParam(name = "name") String txt) {
+    @WebMethod(operationName = "getTruckByVinName")
+    public String getTruckByVinName(@WebParam(name = "name") String txt) {
         ArrayList truck  = new ArrayList();
 //        ArrayList<Truck> Trucks = new ArrayList();
         try {
-                Class.forName("oracle.jdbc.OracleDriver");
+                Connection myConnection = this.getConnection();
+                Statement statement = myConnection.createStatement();
                 int i=0;
-		Connection con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:makani", "system","Tani$1234");
-                Statement st=con.createStatement();
-                String sql ="select * from truck where vin= '"+txt+"'";
-                ResultSet rs = st.executeQuery(sql);
+                String query =string.format("select * from truck where vin= '%s'", txt);
+                ResultSet rs = statement.executeQuery(query);
                 while(rs.next()){
-                String a1= rs.getString("TruckID");
-                String a2= rs.getString("Make");
-		String a3= rs.getString("Year");
-                System.out.println("ITMD566.NewWebService_ITMD566.truckList" + a1+ a2+ a3);
-                truck.add(a1);
-                truck.add(a2); 
-                truck.add(a3);
+                String truckId = rs.getString("TruckID");
+                String make = rs.getString("Make");
+                String year= rs.getString("Year");
+                System.out.println("JeevithWebService.truckList" + truckId+ make+ year);
+                truck.add(truckId);
+                truck.add(make); 
+                truck.add(year);
                 }
                 System.out.println("test.Test.main()"+ truck.toString());
-//                Trucks.add()
 
-                    st.close();
-                    con.close();
-            } catch (Exception e) {
-			e.printStackTrace();
-                    }
+                statement.close();
+                myConnection.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 
         return truck.toString();
     }
